@@ -3,7 +3,10 @@ use std::{
     ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign},
 };
 
-use num::ToPrimitive;
+use num::{integer::sqrt, ToPrimitive};
+use rand::random;
+
+use super::random_range;
 
 #[derive(Debug, PartialEq, Copy)]
 pub struct Vec3 {
@@ -371,8 +374,28 @@ impl Vec3 {
         return self.v[0] * self.v[0] + self.v[1] * self.v[1] + self.v[2] * self.v[2];
     }
 
+    pub fn random() -> Self {
+        return Vec3::new(random::<f64>(), random::<f64>(), random::<f64>());
+    }
+
+    pub fn rand_range<T>(min:T, max:T) -> Self where T: ToPrimitive {
+        let pmin = min.to_f64().unwrap();
+        let pmax = max.to_f64().unwrap();
+        return Vec3::new(random_range(pmin, pmax),random_range(pmin, pmax),random_range(pmin, pmax));
+    }
+
     pub fn to_normal(&self) -> Self {
         return *self / self.length();
+    }
+
+    pub fn random_normal() -> Self {
+        loop {
+            let p = Vec3::rand_range(-1, 1);
+            let lensq = p.length_squared();
+            if lensq <= 1.0 {
+                return p/lensq.sqrt();
+            }
+        }
     }
 }
 
