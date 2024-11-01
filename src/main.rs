@@ -1,12 +1,7 @@
-use core::f64;
-
 use camera::Camera;
-use hittable::{HitRecord, Hittable, HittableList};
+use hittable::HittableList;
 use sphere::Sphere;
-use util::color::{print_color, Color};
-use util::interval::Interval;
-use util::ray::Ray;
-use util::vec::{Point3, Vec3};
+use util::vec::Point3;
 
 mod util;
 mod hittable;
@@ -22,6 +17,7 @@ fn main() {
 
     cam.aspect_ratio = 16.0/9.0;
     cam.image_width = 512;
+    cam.samples_per_pixel = 100;
 
     cam.render(&world);
     

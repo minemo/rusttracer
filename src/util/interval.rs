@@ -30,6 +30,11 @@ impl Interval {
     return self.min < x.to_f64().unwrap() && x.to_f64().unwrap() < self.max;
   }
 
+  pub fn clamp<T>(&self, x: T) -> f64 where T: ToPrimitive {
+    let xf = x.to_f64().unwrap();
+    return if xf<self.min {self.min} else if xf>self.max {self.max} else {xf};
+  }
+
   pub const fn empty() -> Self {
     Self { min: f64::INFINITY, max: -f64::INFINITY }
   }
