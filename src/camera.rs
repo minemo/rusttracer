@@ -51,6 +51,20 @@ impl Camera {
     }
   }
 
+  pub fn _render_quiet(&mut self, world: &dyn Hittable) {
+    self.initialize();
+
+    for j in 0..self.image_height {
+        for i in 0..self.image_width {
+            let mut pcol = Color::default();
+            for _sample in 0..self.samples_per_pixel {
+                let r = self.get_ray(i,j);
+                pcol += self.ray_color(&r, world);
+            }
+        }
+    }
+  }
+
   fn initialize(&mut self) {
 
     self.image_height = (self.image_width as f64 /self.aspect_ratio as f64) as i32;
