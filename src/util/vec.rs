@@ -175,22 +175,21 @@ where
     }
 }
 
-//TODO use generics here
-impl Mul<Vec3> for f64 {
-    type Output = Vec3;
+macro_rules! impl_vec3_mul {
+    ($($t:ty),*) => {
+        $(
+            impl Mul<Vec3> for $t {
+                type Output = Vec3;
 
-    fn mul(self, rhs: Vec3) -> Self::Output {
-        return rhs * self;
-    }
+                fn mul(self, rhs: Vec3) -> Self::Output {
+                    rhs * self
+                }
+            }
+        )*
+    };
 }
 
-impl Mul<Vec3> for i32 {
-    type Output = Vec3;
-
-    fn mul(self, rhs: Vec3) -> Self::Output {
-        return rhs * self;
-    }
-}
+impl_vec3_mul!(f32, f64, i8, i16, i32, i64, i128, u8, u16, u32, u64, u128);
 
 impl MulAssign for Vec3 {
     fn mul_assign(&mut self, rhs: Self) {
@@ -281,7 +280,7 @@ impl Neg for Vec3 {
     type Output = Self;
 
     fn neg(self) -> Self::Output {
-        return -1*self;
+        return -1 * self;
     }
 }
 
