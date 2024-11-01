@@ -3,7 +3,7 @@ use std::{
     ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign},
 };
 
-use num::{integer::sqrt, ToPrimitive};
+use num::ToPrimitive;
 use rand::random;
 
 use super::random_range;
@@ -395,6 +395,15 @@ impl Vec3 {
             if lensq <= 1.0 {
                 return p/lensq.sqrt();
             }
+        }
+    }
+
+    pub fn random_on_hemisphere(normal: Vec3) -> Self {
+        let on_unitsphere = Self::random_normal();
+        if dot(on_unitsphere,normal) > 0.0 {
+            return on_unitsphere;
+        } else {
+            return -on_unitsphere;
         }
     }
 }

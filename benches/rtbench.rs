@@ -1,5 +1,3 @@
-use std::time::Duration;
-
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
 use raytracer::{self, camera::Camera, hittable::HittableList, sphere::Sphere, util::vec::Point3};
 
