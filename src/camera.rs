@@ -14,6 +14,7 @@ pub struct Camera {
     pub aspect_ratio: f64,
     pub image_width: i32,
     pub samples_per_pixel: i32,
+    pub max_depth: i32,
     image_height: i32,
     center: Point3,
     pixel_origin: Point3,
@@ -29,6 +30,7 @@ impl Default for Camera {
             image_width: 100,
             samples_per_pixel: 10,
             image_height: Default::default(),
+            max_depth: 10,
             center: Default::default(),
             pixel_origin: Default::default(),
             pixel_delta_u: Default::default(),
@@ -52,7 +54,7 @@ impl Camera {
                 let mut pcol = Color::default();
                 for _sample in 0..self.samples_per_pixel {
                     let r = self.get_ray(i, j);
-                    pcol += self.ray_color(&r, world);
+                    pcol += self.ray_color(&r, self.max_depth, world);
                 }
                 print_color(&(pcol * self.pixel_samples_scale));
             }
@@ -67,7 +69,7 @@ impl Camera {
                 let mut pcol = Color::default();
                 for _sample in 0..self.samples_per_pixel {
                     let r = self.get_ray(i, j);
-                    pcol += self.ray_color(&r, world);
+                    pcol += self.ray_color(&r, self.max_depth, world);
                 }
             }
         }
@@ -112,11 +114,14 @@ impl Camera {
         return Vec3::new(random::<f64>() - 0.5, random::<f64>() - 0.5, 0);
     }
 
-    fn ray_color(&self, r: &Ray, world: &dyn Hittable) -> Color {
+    fn ray_color(&self, r: &Ray, depth: i32, world: &dyn Hittable) -> Color {
+        if depth <= 0 {
+            return Color::default();
+        }
         let mut rec = HitRecord::default();
         if world.hit(r, Interval::new(0, f64::INFINITY), &mut rec) {
-            let dir = Vec3::random_on_hemisphere(rec.normal);
-            return 0.5 * self.ray_color(&Ray::new(rec.p, dir), world);
+            let dir = rec.normal + Vec3::random_normal();
+            return 0.5 * self.ray_color(&Ray::new(rec.p, dir), depth - 1, world);
         }
 
         let a = 0.5 * (r.direction().to_normal().y() + 1.0);

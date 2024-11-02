@@ -322,10 +322,12 @@ where
     }
 }
 
+#[inline]
 pub fn dot(a: Vec3, b: Vec3) -> f64 {
     return a.x() * b.x() + a.y() * b.y() + a.z() * b.z();
 }
 
+#[inline]
 pub fn cross(a: Vec3, b: Vec3) -> Vec3 {
     return Vec3::new(
         a.y() * b.z() - a.z() * b.y(),
@@ -378,29 +380,39 @@ impl Vec3 {
         return Vec3::new(random::<f64>(), random::<f64>(), random::<f64>());
     }
 
-    pub fn rand_range<T>(min:T, max:T) -> Self where T: ToPrimitive {
+    pub fn rand_range<T>(min: T, max: T) -> Self
+    where
+        T: ToPrimitive,
+    {
         let pmin = min.to_f64().unwrap();
         let pmax = max.to_f64().unwrap();
-        return Vec3::new(random_range(pmin, pmax),random_range(pmin, pmax),random_range(pmin, pmax));
+        return Vec3::new(
+            random_range(pmin, pmax),
+            random_range(pmin, pmax),
+            random_range(pmin, pmax),
+        );
     }
 
+    #[inline]
     pub fn to_normal(&self) -> Self {
         return *self / self.length();
     }
 
+    #[inline]
     pub fn random_normal() -> Self {
         loop {
             let p = Vec3::rand_range(-1, 1);
             let lensq = p.length_squared();
             if lensq <= 1.0 {
-                return p/lensq.sqrt();
+                return p / lensq.sqrt();
             }
         }
     }
 
+    #[inline]
     pub fn random_on_hemisphere(normal: Vec3) -> Self {
         let on_unitsphere = Self::random_normal();
-        if dot(on_unitsphere,normal) > 0.0 {
+        if dot(on_unitsphere, normal) > 0.0 {
             return on_unitsphere;
         } else {
             return -on_unitsphere;

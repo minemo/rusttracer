@@ -3,10 +3,10 @@ use hittable::HittableList;
 use sphere::Sphere;
 use util::vec::Point3;
 
-mod util;
+mod camera;
 mod hittable;
 mod sphere;
-mod camera;
+mod util;
 
 fn main() {
     let mut world = HittableList::new();
@@ -15,10 +15,10 @@ fn main() {
 
     let mut cam: Camera = Camera::new();
 
-    cam.aspect_ratio = 16.0/9.0;
-    cam.image_width = 512;
+    cam.aspect_ratio = 16.0 / 9.0;
+    cam.image_width = 400;
     cam.samples_per_pixel = 100;
+    cam.max_depth = 50;
 
     cam.render(&world);
-    
 }
