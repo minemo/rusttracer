@@ -1,21 +1,24 @@
-use crate::util::{
-    interval::Interval, ray::Ray, vec::{dot, Point3, Vec3}
-};
+use std::rc::Rc;
+
+use crate::{material::{Lambertian, Material}, util::{
+    color::Color, interval::Interval, ray::Ray, vec::{dot, Point3, Vec3}
+}};
 
 pub trait Hittable {
     fn hit(&self, r: &Ray, ray_t: Interval, rec: &mut HitRecord) -> bool;
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct HitRecord {
     pub p: Point3,
     pub normal: Vec3,
+    pub mat: Rc<dyn Material>,
     pub t: f64,
     pub front_facing: bool,
 }
 
 pub struct HittableList {
-    objects: Vec<Box<dyn Hittable>>,
+    objects: Vec<Rc<dyn Hittable>>,
 }
 
 impl Default for HitRecord {
@@ -23,6 +26,7 @@ impl Default for HitRecord {
         Self {
             p: Default::default(),
             normal: Default::default(),
+            mat: Rc::new(Lambertian::new(Color::random())),
             t: Default::default(),
             front_facing: Default::default(),
         }
@@ -58,7 +62,7 @@ impl Hittable for HittableList {
             if o.hit(r, Interval::new(ray_t.min, closest), &mut temp_rec) {
                 has_hit = true;
                 closest = temp_rec.t;
-                *rec = temp_rec;
+                *rec = temp_rec.clone();
             }
         }
 
@@ -75,7 +79,7 @@ impl HittableList {
         self.objects.clear();
     }
 
-    pub fn add(&mut self, object: Box<dyn Hittable>) {
+    pub fn add(&mut self, object: Rc<dyn Hittable>) {
         self.objects.push(object);
     }
 }

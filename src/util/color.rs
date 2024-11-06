@@ -4,6 +4,7 @@ use crate::util::{interval::Interval, vec};
 
 pub type Color = vec::Vec3;
 
+#[inline]
 pub fn linear_to_gamma(linear: f64) -> f64 {
     if linear > 0.0 {
         return linear.sqrt();

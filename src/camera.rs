@@ -110,6 +110,7 @@ impl Camera {
         return Ray::new(ray_origin, ray_dir);
     }
 
+    #[inline]
     fn sample_square(&self) -> Vec3 {
         return Vec3::new(random::<f64>() - 0.5, random::<f64>() - 0.5, 0);
     }
@@ -120,8 +121,12 @@ impl Camera {
         }
         let mut rec = HitRecord::default();
         if world.hit(r, Interval::new(0, f64::INFINITY), &mut rec) {
-            let dir = rec.normal + Vec3::random_normal();
-            return 0.5 * self.ray_color(&Ray::new(rec.p, dir), depth - 1, world);
+            let mut scattered = Ray::default();
+            let mut attenuation = Color::default();
+            if rec.mat.scatter(r, &rec, &mut attenuation, &mut scattered) {
+                return attenuation * self.ray_color(&scattered, depth-1, world);
+            }
+            return Color::default();
         }
 
         let a = 0.5 * (r.direction().to_normal().y() + 1.0);

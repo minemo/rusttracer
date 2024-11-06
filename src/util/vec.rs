@@ -376,6 +376,16 @@ impl Vec3 {
         return self.v[0] * self.v[0] + self.v[1] * self.v[1] + self.v[2] * self.v[2];
     }
 
+    #[inline]
+    pub fn to_normal(&self) -> Self {
+        return *self / self.length();
+    }
+
+    pub fn near_zero(&self) -> bool {
+        let s = 1e-8;
+        return (self.v[0].abs() < s) && (self.v[1].abs() < s) && (self.v[2].abs() < s);
+    }
+
     pub fn random() -> Self {
         return Vec3::new(random::<f64>(), random::<f64>(), random::<f64>());
     }
@@ -391,11 +401,6 @@ impl Vec3 {
             random_range(pmin, pmax),
             random_range(pmin, pmax),
         );
-    }
-
-    #[inline]
-    pub fn to_normal(&self) -> Self {
-        return *self / self.length();
     }
 
     #[inline]
@@ -417,6 +422,11 @@ impl Vec3 {
         } else {
             return -on_unitsphere;
         }
+    }
+
+    #[inline]
+    pub fn reflect(v: Vec3, n: Vec3) -> Self {
+        return v - 2.0 * dot(v, n) * n;
     }
 }
 
